@@ -31,7 +31,10 @@ def index():
 @app.route('/api/user/add',methods=['GET','POST'])
 def useradd():
 	error = "success"
-	if request.method == 'GET' or request.method == 'POST':
+	if request.method == 'GET' :
+		return {'Method':'Get:not supported'}
+
+	if request.method == 'POST':
 		db = db_connect()
 		con = db.cursor()
 		json_results = []
@@ -60,7 +63,10 @@ def useradd():
 def tr_send():
 	stat = True
 	error = "ok"	
-	if request.method == 'GET' or request.method == 'POST':
+	if request.method == 'GET' :
+		return {'Method':'Get:not supported'}
+
+	if request.method == 'POST':
 		db = db_connect()
 		con = db.cursor()
 		json_results = []
@@ -115,7 +121,9 @@ def tr_send():
 
 @app.route('/api/transaction/getall',methods=['GET','POST'])
 def tr_get():
-	if request.method == 'GET' or request.method == 'POST':
+	if request.method == 'GET' :
+		return {'Method':'Get:not supported'}
+	if request.method == 'POST':
 		db = db_connect()
 		con = db.cursor()
 		json_results = []
@@ -131,7 +139,9 @@ def tr_get():
 			
 @app.route('/api/transaction/getinfo',methods=['GET','POST'])
 def tr_info():
-	if request.method == 'GET' or request.method == 'POST':
+	if request.method == 'GET' :
+		return {'Method':'Get:not supported'}
+	if  request.method == 'POST':
 		db = db_connect()
 		con = db.cursor()
 		json_results = []
