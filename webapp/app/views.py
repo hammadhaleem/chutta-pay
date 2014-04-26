@@ -40,7 +40,9 @@ def useradd():
 		passw = request.values.get("passwd")
 		data = con.execute("SELECT id FROM users WHERE phnum = "+phno)
 		if data == 1:
-			error = "fail"
+			error = "fail"  # user already exist , just return his id
+			a = str(con.fetchall())
+			user_id = int(re.search(r'[0-9]+',a).group())
 		else:
 			query = "INSERT INTO users ( phnum , password ) VALUES ('" +phno+"','"+passw+"')"
 			print query
@@ -65,26 +67,33 @@ def tr_send():
 		amount = request.values.get("amount")
 		fromid = request.values.get("from")
 		toid = request.values.get("to")
-		con.execute("SELECT balance FROM users WHERE phnum = "+fromid)
+		con.execute("SELECT balance FROM users WHERE id = "+fromid)
 		
 		a = str(con.fetchall())
-		balance = int(re.search(r'[0-9]+',a).group())
 		
-		if balance > amount:
+		if len(a)>2:
+			balance = int(re.search(r'[0-9]+',a).group())
+		else:
+			balance = 0
+		toexist = con.execute("SELECT id FROM `users` WHERE id ="+toid)
+		fromexist = con.execute("SELECT id FROM `users` WHERE id ="+fromid)
+		
+		if balance > amount or toexist != 1 or fromexist != 1:
 			error="fail"
 		else:
-			con.execute("UPDATE `users` SET `balance`="+str(balance - int(amount))+" WHERE phnum = "+fromid)
-			con.execute("SELECT balance FROM users WHERE phnum = "+toid)
+			newbalance = str(balance - int(amount))
+			con.execute("UPDATE `users` SET `balance`="+newbalance+" WHERE id = "+fromid)
+			con.execute("SELECT balance FROM users WHERE id = "+toid)
 			a = str(con.fetchall())
 			balance = int(re.search(r'[0-9]+',a).group())
-			con.execute("UPDATE `users` SET `balance`="+str(balance + int(amount))+" WHERE phnum = "+toid)
+			con.execute("UPDATE `users` SET `balance`="+str(balance + int(amount))+" WHERE id = "+toid)
 			query = "INSERT INTO `transaction`(`toid`, `fromid`, `amount`) VALUES ('"+toid+"', '"+fromid+"', '"+amount+"')"
 			print query			
 			con.execute(query)
 		
 		db.commit()
 		db.close()
-		output = {'balance':balance,'status': error}
+		output = {'balance':newbalance,'status': error}
 		json_results.append(output)
 		return jsonify(items=json_results)
 
