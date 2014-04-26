@@ -85,6 +85,26 @@ def useradd():
 		json_results.append(output)
 		return jsonify(items=json_results)
 
+
+@app.route('/api/user/amount',methods=['GET','POST'])
+def useradd():
+	error = "success"
+	if request.method == 'GET':
+		return jsonify({'Method':'Get:not supported'})
+
+	if request.method == 'POST':
+		db = db_connect()
+		con = db.cursor()
+		json_results = []
+		
+		user_id = request.values.get("user_id")
+		
+		con.execute("SELECT balance FROM users WHERE id = "+user_id)
+		balance = str(con.fetchall()[0][0])
+		db.close()
+		output = {'user_id':user_id,'balance':balance}
+		json_results.append(output)
+		return jsonify(items=json_results)
 @app.route('/api/transaction/send',methods=['GET','POST'])
 def tr_send():
 	stat = True
@@ -98,9 +118,9 @@ def tr_send():
 		json_results = []
 		newbalance = 0
 		amount = request.values.get("amount")
-		fromid = request.values.get("from")
-		toid = request.values.get("to")
-		passwd = request.values.get("password")
+		fromid = request.values.get("from_user_id")
+		toid = request.values.get("to_user_id")
+		passwd = request.values.get("passwd")
 		con.execute("SELECT balance FROM users WHERE id = "+fromid)
 		a = str(con.fetchall())
 		
