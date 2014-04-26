@@ -60,6 +60,60 @@ def my_id(data):
 	db.close()
 	output='Your id ='+user_id+' and balance ='+balance
 	return output
+	
+def m_transfer(data):
+	stat = True
+	db = db_connect()
+	con = db.cursor()
+	json_results = []
+	newbalance = 0
+	fromid = data[1]
+	toid = data[2]
+	amount = data[3]
+	passwd = data[4]
+	con.execute("SELECT balance FROM users WHERE id = "+fromid)
+	a = str(con.fetchall())
+	
+	if len(a)>2:
+		balance = int(re.search(r'[0-9]+',a).group())
+	else:
+		balance = 0
+	if balance < int(amount):
+		stat = False
+	
+	toexist = con.execute("SELECT id FROM `users` WHERE id ="+toid)
+	if toexist != 1:
+		stat = False
+	
+	fromexist = con.execute("SELECT id FROM `users` WHERE id ="+fromid)
+	if fromexist != 1:
+		stat = False
+	
+	con.execute("SELECT password from `users` WHERE id = "+fromid)
+	
+	if passwd != con.fetchall()[0][0]:
+		stat = False;
+	
+	
+	if stat == False:
+		output = "Sorry your transaction Failed"
+		return output
+	else:
+		newbalance = str(balance - int(amount))
+		con.execute("UPDATE `users` SET `balance`="+newbalance+" WHERE id = "+fromid)
+		con.execute("SELECT balance FROM users WHERE id = "+toid)
+		a = str(con.fetchall())
+		balance = int(re.search(r'[0-9]+',a).group())
+		con.execute("UPDATE `users` SET `balance`="+str(balance + int(amount))+" WHERE id = "+toid)
+		query = "INSERT INTO `transaction`(`toid`, `fromid`, `amount`) VALUES ('"+toid+"', '"+fromid+"', '"+amount+"')"
+		print query			
+		con.execute(query)
+	
+	db.commit()
+	db.close()
+	output = "Transaction completed successfully. Your new balance is :"+newbalance
+	return output
+
 
 @app.route('/')
 @app.route('/index')
@@ -83,13 +137,26 @@ def RegMsg():
 		except :
 			return buildHTML("Error")
 		if data[0] == 'register':
+			if len(data) != 3:
+				return buildHTML("give phonenumber and password")
 			return buildHTML(regmesg(data))
+		
 		elif data[0] == 'my-account':
+			if len(data) != 2:
+				return buildHTML("give phonenumber")
 			return  buildHTML(my_id(data))
+		
 		elif data[0] == 'transfer':
-			return buildHTML(str("transfer"))
+			if len(data) != 5:
+				return buildHTML("give your-id other-id amount password")
+			return buildHTML(m_transfer(data))
+		
+		elif data[0] == 'keyword':
+			output = "Type @chutta <keyword> where keywords are register, my-account, transfer"
+			return buildHTML(output)
 		else :
-			return buildHTML("Error")
+			output = "Sorry keyword cannot be recognized type @chutta keyword for list of keywords"
+			return buildHTML(output)
 
 	
 
