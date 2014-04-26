@@ -28,6 +28,22 @@ def index():
         json_results.append(output)
     return jsonify(items=json_results)
 
+@app.route('/api/msg',methods=['GET','POST'])
+
+def RegMsg():
+	if request.method == 'GET' :
+		text = request.values.get("txtweb-message")
+		data = text.split(" ")
+		if data[0] == 'register':
+			return "Register"
+		if data[0] == 'my-id':
+			return  str( request.values.get("txtweb-id"))
+		if data[0] == 'transfer':
+			return str("transfer")
+	return text
+
+
+
 @app.route('/api/user/add',methods=['GET','POST'])
 def useradd():
 	error = "success"
