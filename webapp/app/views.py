@@ -88,7 +88,7 @@ def useradd():
 		return jsonify(items=json_results)
 
 @app.route('/api/user/amount',methods=['GET','POST'])
-def useradd():
+def useramt():
 	error = "success"
 	if request.method == 'GET':
 		return jsonify({'Method':'Get:not supported'})
