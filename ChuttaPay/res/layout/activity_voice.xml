@@ -2,37 +2,32 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffff00"
+    android:background="#ffff88"
     android:paddingLeft="15dp"
     android:paddingRight="15dp" >
 
-    <TextView
-        android:id="@+id/tv_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"
-        android:text="Please enter following details:" />
-
-    <TextView
-        android:id="@+id/voice_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_info"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp" />
-
-    <Button
-        android:id="@+id/btn_submit"
+    <LinearLayout
+        android:id="@+id/ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/voice_info"
-        android:layout_marginTop="44dp"
-        android:background="#0000ff"
-        android:text="Submit"
-        android:textAlignment="center"
-        android:textColor="#ffffff" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:orientation="vertical" >
 
-    
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:text="Your Previous Successful Transactions." />
+        
+        <ListView
+            android:id="@+id/list_transaction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+            
+        </ListView>
+        
+        </LinearLayout>
 
 </RelativeLayout>
