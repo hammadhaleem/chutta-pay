@@ -4,7 +4,7 @@ import os
 from flask import Blueprint, request, jsonify
 from werkzeug import secure_filename
 from app import app
-import kookoo
+#import kookoo
 import pickle
 import sys, os, json, urllib2, urllib, time
 import requests
