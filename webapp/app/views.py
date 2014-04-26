@@ -36,8 +36,11 @@ def index():
 
 def RegMsg():
 	if request.method == 'GET' :
-		text = request.values.get("txtweb-message")
-		data = text.split(" ")
+		try :
+			text = request.values.get("txtweb-message")
+			data = text.split(" ")
+		except :
+			return buildHTML("Error")
 		if data[0] == 'register':
 			return buildHTML("Register")
 		elif data[0] == 'my-id':
