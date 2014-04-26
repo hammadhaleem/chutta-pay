@@ -90,6 +90,19 @@ def tr_send():
 
 @app.route('/api/transaction/getall',methods=['GET','POST'])
 def tr_get():
-	pass
+	if request.method == 'GET' or request.method == 'POST':
+		db = db_connect()
+		con = db.cursor()
+		json_results = []
+		tids = []
+		user_id = request.values.get("user_id")
+		con.execute("SELECT tid FROM `transaction` WHERE toid= "+user_id+" OR fromid = "+user_id)
+		data = con.fetchall()
+		for tid in data:
+			tids.append(re.search(r'[0-9]+',str(tid)).group())
+		output = {'transaction':tids}
+		json_results.append(output)
+		return jsonify(items=json_results)	
+			
 	
 
