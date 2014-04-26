@@ -34,7 +34,8 @@ def useradd():
 	if request.method == 'GET' or request.method == 'POST':
 		db = db_connect()
 		con = db.cursor()
-		json_results = []       
+		json_results = []
+		user_id = ""       
 		phno = request.values.get("phno")
 		passw = request.values.get("passwd")
 		data = con.execute("SELECT id FROM users WHERE phnum = "+phno)
@@ -44,10 +45,12 @@ def useradd():
 			query = "INSERT INTO users ( phnum , password ) VALUES ('" +phno+"','"+passw+"')"
 			print query
 			con.execute(query)
+			con.execute("SELECT id FROM users WHERE phnum = "+phno)
+			user_id = re.search(r'[0-9]+',str(con.fetchall())).group()
 		
 		db.commit()
 		db.close()
-		output = {'phnum':phno,'status': error}
+		output = {'phnum':phno,'status': error,'user_id':user_id}
 		json_results.append(output)
 		return jsonify(items=json_results)
 
@@ -84,4 +87,9 @@ def tr_send():
 		output = {'balance':balance,'status': error}
 		json_results.append(output)
 		return jsonify(items=json_results)
+
+@app.route('/api/transaction/getall',methods=['GET','POST'])
+def tr_get():
+	pass
+	
 
