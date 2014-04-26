@@ -67,7 +67,7 @@ def useradd():
 		con = db.cursor()
 		json_results = []
 		user_id = ""       
-		phno = request.values.get("phno")
+		phno = request.values.get("phone_no")
 		passw = request.values.get("passwd")
 		data = con.execute("SELECT id FROM users WHERE phnum = "+phno)
 		if data == 1:
