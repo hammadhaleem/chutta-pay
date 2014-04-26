@@ -175,10 +175,11 @@ def tr_get():
 		json_results = []
 		tids = []
 		user_id = request.values.get("user_id")
-		con.execute("SELECT tid FROM `transaction` WHERE toid= "+user_id+" OR fromid = "+user_id)
+		con.execute("SELECT * FROM `transaction` WHERE toid= "+user_id+" OR fromid = "+user_id)
 		data = con.fetchall()
-		for tid in data:
-			tids.append(re.search(r'[0-9]+',str(tid)).group())
+		for row in data:
+			#tids.append(re.search(r'[0-9]+',str(tid)).group())
+			tids.append({"tid":str(row[0]),"to":str(row[1]),"from":str(row[2]),"amount":str(row[3]),"timestamp":str(row[4])})
 		output = {'transaction':tids}
 		json_results.append(output)
 		return jsonify(items=json_results)	
