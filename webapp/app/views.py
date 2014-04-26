@@ -58,29 +58,45 @@ def useradd():
 
 @app.route('/api/transaction/send',methods=['GET','POST'])
 def tr_send():
-	error = "success"	
+	stat = True
+	error = "ok"	
 	if request.method == 'GET' or request.method == 'POST':
 		db = db_connect()
 		con = db.cursor()
 		json_results = []
-		#con.execute("INSERT INTO `transaction`(`toid`, `fromid`, `amount`) VALUES ('9995', '99999', '20')")
+		newbalance = 0
 		amount = request.values.get("amount")
 		fromid = request.values.get("from")
 		toid = request.values.get("to")
+		passwd = request.values.get("password")
 		con.execute("SELECT balance FROM users WHERE id = "+fromid)
-		
 		a = str(con.fetchall())
 		
 		if len(a)>2:
 			balance = int(re.search(r'[0-9]+',a).group())
 		else:
 			balance = 0
-		toexist = con.execute("SELECT id FROM `users` WHERE id ="+toid)
-		fromexist = con.execute("SELECT id FROM `users` WHERE id ="+fromid)
+		if balance < int(amount):
+			stat = False
 		
-		if balance > amount or toexist != 1 or fromexist != 1:
+		toexist = con.execute("SELECT id FROM `users` WHERE id ="+toid)
+		if toexist != 1:
+			stat = False
+		
+		fromexist = con.execute("SELECT id FROM `users` WHERE id ="+fromid)
+		if fromexist != 1:
+			stat = False
+		
+		con.execute("SELECT password from `users` WHERE id = "+fromid)
+		
+		if passwd != con.fetchall()[0][0]:
+			stat = False;
+		
+		
+		if stat == False:
 			error="fail"
 		else:
+			
 			newbalance = str(balance - int(amount))
 			con.execute("UPDATE `users` SET `balance`="+newbalance+" WHERE id = "+fromid)
 			con.execute("SELECT balance FROM users WHERE id = "+toid)
