@@ -44,7 +44,7 @@ def RegMsg():
 			return  buildHTML(str( request.values.get("txtweb-id")))
 		elif data[0] == 'transfer':
 			return buildHTML(str("transfer"))
-		else 
+		else :
 			return buildHTML("Error")
 
 	
