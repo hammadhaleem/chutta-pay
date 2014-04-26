@@ -1,3 +1,4 @@
+import MySQLdb, re
 import time
 import os
 from flask import Blueprint, request, jsonify
@@ -12,6 +13,9 @@ import mechanize, cookielib, urllib2
 from bs4 import BeautifulSoup
 
 
+def db_connect():
+  db = MySQLdb.connect(host="localhost", user="root", passwd="kgggdkp1992", db="chuttapay")
+  return db
 
 @app.route('/')
 @app.route('/index')
@@ -23,4 +27,61 @@ def index():
         output = {'greetings':'Welcome to api'}
         json_results.append(output)
     return jsonify(items=json_results)
+
+@app.route('/api/user/add',methods=['GET','POST'])
+def useradd():
+	error = "success"
+	if request.method == 'GET' or request.method == 'POST':
+		db = db_connect()
+		con = db.cursor()
+		json_results = []       
+		phno = request.values.get("phno")
+		passw = request.values.get("passwd")
+		data = con.execute("SELECT id FROM users WHERE phnum = "+phno)
+		if data == 1:
+			error = "fail"
+		else:
+			query = "INSERT INTO users ( phnum , password ) VALUES ('" +phno+"','"+passw+"')"
+			print query
+			con.execute(query)
+		
+		db.commit()
+		db.close()
+		output = {'phnum':phno,'status': error}
+		json_results.append(output)
+		return jsonify(items=json_results)
+
+@app.route('/api/transaction/send',methods=['GET','POST'])
+def tr_send():
+	error = "success"	
+	if request.method == 'GET' or request.method == 'POST':
+		db = db_connect()
+		con = db.cursor()
+		json_results = []
+		#con.execute("INSERT INTO `transaction`(`toid`, `fromid`, `amount`) VALUES ('9995', '99999', '20')")
+		amount = request.values.get("amount")
+		fromid = request.values.get("from")
+		toid = request.values.get("to")
+		con.execute("SELECT balance FROM users WHERE phnum = "+fromid)
+		
+		a = str(con.fetchall())
+		balance = int(re.search(r'[0-9]+',a).group())
+		
+		if balance > amount:
+			error="fail"
+		else:
+			con.execute("UPDATE `users` SET `balance`="+str(balance - int(amount))+" WHERE phnum = "+fromid)
+			con.execute("SELECT balance FROM users WHERE phnum = "+toid)
+			a = str(con.fetchall())
+			balance = int(re.search(r'[0-9]+',a).group())
+			con.execute("UPDATE `users` SET `balance`="+str(balance + int(amount))+" WHERE phnum = "+toid)
+			query = "INSERT INTO `transaction`(`toid`, `fromid`, `amount`) VALUES ('"+toid+"', '"+fromid+"', '"+amount+"')"
+			print query			
+			con.execute(query)
+		
+		db.commit()
+		db.close()
+		output = {'balance':balance,'status': error}
+		json_results.append(output)
+		return jsonify(items=json_results)
 
