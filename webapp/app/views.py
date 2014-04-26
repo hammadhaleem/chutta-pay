@@ -40,10 +40,13 @@ def RegMsg():
 		data = text.split(" ")
 		if data[0] == 'register':
 			return buildHTML("Register")
-		if data[0] == 'my-id':
+		elif data[0] == 'my-id':
 			return  buildHTML(str( request.values.get("txtweb-id")))
-		if data[0] == 'transfer':
+		elif data[0] == 'transfer':
 			return buildHTML(str("transfer"))
+		else 
+			return buildHTML("Error")
+
 	
 
 
