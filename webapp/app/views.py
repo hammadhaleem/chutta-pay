@@ -4,11 +4,6 @@ import os
 from flask import Blueprint, request, jsonify
 from werkzeug import secure_filename
 from app import app
-<<<<<<< HEAD
-#import kookoo
-=======
-import kookoo
->>>>>>> b8afde4229e144699d0e287ff9b9d500606a1fb5
 import pickle
 import sys, os, json, urllib2, urllib, time
 import requests
@@ -16,15 +11,13 @@ import requests, json, os.path
 import mechanize, cookielib, urllib2
 from bs4 import BeautifulSoup
 
-<<<<<<< HEAD
-
-=======
 def buildHTML(text):
 	var = "<html><head><title> Hello! </title><meta http-equiv='Content-Type' content='text/html; charset=UTF-8' /><meta name='txtweb-appkey' content='4abf3150-754e-46de-998e-42a2b99605df' /></head><body>"
 	var =var + str(text)
 	var = var+ "</body></html>"
 	return var 
->>>>>>> b8afde4229e144699d0e287ff9b9d500606a1fb5
+
+
 def db_connect():
   db = MySQLdb.connect(host="localhost", user="root", passwd="kgggdkp1992", db="chuttapay")
   return db
@@ -40,12 +33,7 @@ def index():
         json_results.append(output)
     return jsonify(items=json_results)
 
-<<<<<<< HEAD
-@app.route('/api/user/add',methods=['GET','POST'])
-def useradd():
-	error = "success"
-	if request.method == 'GET' or request.method == 'POST':
-=======
+
 @app.route('/api/msg',methods=['GET'] )
 
 def RegMsg():
@@ -75,7 +63,6 @@ def useradd():
 		return jsonify({'Method':'Get:not supported'})
 
 	if request.method == 'POST':
->>>>>>> b8afde4229e144699d0e287ff9b9d500606a1fb5
 		db = db_connect()
 		con = db.cursor()
 		json_results = []
@@ -100,9 +87,6 @@ def useradd():
 		json_results.append(output)
 		return jsonify(items=json_results)
 
-<<<<<<< HEAD
-=======
-
 @app.route('/api/user/amount',methods=['GET','POST'])
 def useradd():
 	error = "success"
@@ -122,33 +106,25 @@ def useradd():
 		output = {'user_id':user_id,'balance':balance}
 		json_results.append(output)
 		return jsonify(items=json_results)
->>>>>>> b8afde4229e144699d0e287ff9b9d500606a1fb5
+
 @app.route('/api/transaction/send',methods=['GET','POST'])
 def tr_send():
 	stat = True
 	error = "ok"	
-<<<<<<< HEAD
-	if request.method == 'GET' or request.method == 'POST':
-=======
+
 	if request.method == 'GET' :
 		return jsonify( {'Method':'Get:not supported'})
 
 	if request.method == 'POST':
->>>>>>> b8afde4229e144699d0e287ff9b9d500606a1fb5
+
 		db = db_connect()
 		con = db.cursor()
 		json_results = []
 		newbalance = 0
 		amount = request.values.get("amount")
-<<<<<<< HEAD
-		fromid = request.values.get("from")
-		toid = request.values.get("to")
-		passwd = request.values.get("password")
-=======
 		fromid = request.values.get("from_user_id")
 		toid = request.values.get("to_user_id")
 		passwd = request.values.get("passwd")
->>>>>>> b8afde4229e144699d0e287ff9b9d500606a1fb5
 		con.execute("SELECT balance FROM users WHERE id = "+fromid)
 		a = str(con.fetchall())
 		
@@ -195,13 +171,9 @@ def tr_send():
 
 @app.route('/api/transaction/getall',methods=['GET','POST'])
 def tr_get():
-<<<<<<< HEAD
-	if request.method == 'GET' or request.method == 'POST':
-=======
 	if request.method == 'GET' :
 		return jsonify({'Method':'Get:not supported'})
 	if request.method == 'POST':
->>>>>>> b8afde4229e144699d0e287ff9b9d500606a1fb5
 		db = db_connect()
 		con = db.cursor()
 		json_results = []
@@ -210,7 +182,6 @@ def tr_get():
 		con.execute("SELECT * FROM `transaction` WHERE toid= "+user_id+" OR fromid = "+user_id)
 		data = con.fetchall()
 		for row in data:
-			#tids.append(re.search(r'[0-9]+',str(tid)).group())
 			tids.append({"tid":str(row[0]),"to":str(row[1]),"from":str(row[2]),"amount":str(row[3]),"timestamp":str(row[4])})
 		output = {'transaction':tids}
 		json_results.append(output)
@@ -218,13 +189,9 @@ def tr_get():
 			
 @app.route('/api/transaction/getinfo',methods=['GET','POST'])
 def tr_info():
-<<<<<<< HEAD
-	if request.method == 'GET' or request.method == 'POST':
-=======
 	if request.method == 'GET' :
 		return jsonify({'Method':'Get:not supported'})
 	if  request.method == 'POST':
->>>>>>> b8afde4229e144699d0e287ff9b9d500606a1fb5
 		db = db_connect()
 		con = db.cursor()
 		json_results = []
