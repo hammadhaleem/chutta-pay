@@ -12,7 +12,11 @@ import requests, json, os.path
 import mechanize, cookielib, urllib2
 from bs4 import BeautifulSoup
 
-
+def buildHTML(text):
+	var = "<html><head><title> Hello! </title><meta http-equiv='Content-Type' content='text/html; charset=UTF-8' /><meta name='txtweb-appkey' content='4abf3150-754e-46de-998e-42a2b99605df' /></head><body>"
+	var =var + str(text)
+	var = var+ "</body></html>"
+	return var 
 def db_connect():
   db = MySQLdb.connect(host="localhost", user="root", passwd="kgggdkp1992", db="chuttapay")
   return db
@@ -28,19 +32,19 @@ def index():
         json_results.append(output)
     return jsonify(items=json_results)
 
-@app.route('/api/msg',methods=['GET','POST'])
+@app.route('/api/msg',methods=['GET'] )
 
 def RegMsg():
 	if request.method == 'GET' :
 		text = request.values.get("txtweb-message")
 		data = text.split(" ")
 		if data[0] == 'register':
-			return "Register"
+			return buildHTML("Register")
 		if data[0] == 'my-id':
-			return  str( request.values.get("txtweb-id"))
+			return  buildHTML(str( request.values.get("txtweb-id")))
 		if data[0] == 'transfer':
-			return str("transfer")
-	return text
+			return buildHTML(str("transfer"))
+	
 
 
 
