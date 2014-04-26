@@ -104,5 +104,18 @@ def tr_get():
 		json_results.append(output)
 		return jsonify(items=json_results)	
 			
-	
-
+@app.route('/api/transaction/getinfo',methods=['GET','POST'])
+def tr_info():
+	if request.method == 'GET' or request.method == 'POST':
+		db = db_connect()
+		con = db.cursor()
+		json_results = []
+		tid = request.values.get("tid")		
+		con.execute("SELECT * FROM `transaction` where `tid`="+tid)
+		data = con.fetchall()
+		data = data[0]
+		output = {"transaction":{"to":str(data[1]),"from":str(data[2]),"amount":str(data[3]),"timestamp":str(data[4])}}
+		json_results.append(output)
+		return jsonify(items=json_results)
+		return str(data[0][0])
+		return str(data)
