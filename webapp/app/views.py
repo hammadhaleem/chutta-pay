@@ -22,6 +22,45 @@ def db_connect():
   db = MySQLdb.connect(host="localhost", user="root", passwd="kgggdkp1992", db="chuttapay")
   return db
 
+
+def regmesg(data):
+	db = db_connect()
+	con = db.cursor()
+	json_results = []
+	user_id = ""       
+	phno = data[1]
+	passw = data[2]
+	data = con.execute("SELECT id FROM users WHERE phnum = "+phno)
+	if data == 1:
+		error = "fail"  # user already exist , just return his id
+		a = str(con.fetchall())
+		user_id = int(re.search(r'[0-9]+',a).group())
+	else:
+		query = "INSERT INTO users ( phnum , password ) VALUES ('" +phno+"','"+passw+"')"
+		print query
+		con.execute(query)
+		con.execute("SELECT id FROM users WHERE phnum = "+phno)
+		user_id = re.search(r'[0-9]+',str(con.fetchall())).group()
+	
+	db.commit()
+	db.close()
+	output = "Successfully registered your id ="+user_id
+	return output
+	
+
+def my_id(data):
+	error = "success"
+	db = db_connect()
+	con = db.cursor()
+	phno = data[1]
+	con.execute("SELECT id,balance FROM users WHERE phnum = "+phno)
+	ret = con.fetchall()
+	balance = str(ret[0][1])
+	user_id = str(ret[0][0])
+	db.close()
+	output='Your id ='+user_id+' and balance ='+balance
+	return output
+
 @app.route('/')
 @app.route('/index')
 @app.route('/api/', methods=['GET'])
@@ -44,9 +83,9 @@ def RegMsg():
 		except :
 			return buildHTML("Error")
 		if data[0] == 'register':
-			return buildHTML("Register")
-		elif data[0] == 'my-id':
-			return  buildHTML(str( request.values.get("txtweb-id")))
+			return buildHTML(regmesg(data))
+		elif data[0] == 'my-account':
+			return  buildHTML(my_id(data))
 		elif data[0] == 'transfer':
 			return buildHTML(str("transfer"))
 		else :
